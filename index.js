@@ -6,7 +6,7 @@ const keys = require('./config/keys')
 require('./models/User')
 require('./services/passport')
 
-mongoose.connect(keys.mongoURI, { useNewUrlParser: true})
+mongoose.connect(keys.mongoURI, { useNewUrlParser: true })
 
 const app = express()
 
@@ -20,9 +20,9 @@ app.use(
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.get('/', (req, res) => res.send({
-  yell: 'Booyah'
-}))
+app.get('/', (req, res) => res.send(
+  { yell: 'Booyah' }
+))
 
 require('./routes/authRoutes')(app)
 
