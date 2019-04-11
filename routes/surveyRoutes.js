@@ -12,7 +12,7 @@ module.exports = app => {
     '/api/surveys',
     requireLogin,
     requireCredits,
-    (req, res) => {
+    async (req, res) => {
       const {
         title,
         subject,
@@ -27,11 +27,22 @@ module.exports = app => {
         recipients: recipients.split(',').map(email => ({ email: email.trim() })),
         _user: req.user.id,
         dateSent: Date.now()
-      })
+      });
 
       // Great place to send an email
       const mailer = new Mailer(survey, surveyTemplate(survey))
-      mailer.send()
+
+      try {
+        await mailer.send()
+        await survey.save()
+  
+        req.user.credits -= 1
+        await req.user.save()
+  
+        res.send(user)
+      } catch(err) {
+        res.status(422).send(err)
+      }
     }
   )
 }
